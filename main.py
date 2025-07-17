@@ -12,7 +12,7 @@ class Task():
     Represents a task with name, description, status, creation date, and unique id.
     """
     def __init__(self, name, description=None):
-        self.id = next(auto_num_gen)
+        self._id = next(auto_num_gen)
         self.name = name
         self.status = False
         self.date = datetime.now()
@@ -30,6 +30,7 @@ class TaskManager():
         """create a task"""
         task = Task(name, description)
         self.tasks.append(task)
+        return task
 
     def show_tasks(self):
         """show all task"""
@@ -51,3 +52,32 @@ class TaskManager():
             self.status = False
 
         self.tasks[id - 1] = task
+
+
+class CommandLine():
+    task_manager = TaskManager()
+    def create(self):
+        name = input("give the task name: ")
+        description = input("give the task description (optional): ")
+        task = self.task_manager.create_task(name, description)
+        print(f"your new task --> {task}")
+    
+    def edit(self):
+        id = int(input("give the task id you want edited: "))
+        name = input("give the task name: ")
+        description = input("give the task description (optional): ")
+        task = self.task_manager.edit_task(id, name, description)
+        print(f"succesfuly, your new update of task --> {task}")
+
+    def mark_down(self):
+        id = int(input("give the task id you want edited: "))
+        task = self.task_manager.mark_done(id)
+        print(f"succesfuly, your new update of task --> {task}")
+
+    def remove(self):
+        id = int(input("give the task id you want edited: "))
+        self.task_manager(id)
+        print("succesfully removed")
+
+    def show_all(self):
+        self.task_manager.show_tasks()
