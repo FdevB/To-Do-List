@@ -50,21 +50,20 @@ class TaskManager():
 
     def edit_task(self, id, name, description=None):
         """edited a task with id"""
-        task = Task(name, description)
-        task.id = id
-        self.tasks[id - 1] = task
+        for task in self.tasks:
+            if task.id == id:
+                task.name = name
+                task.description = description
 
     def remove_task(self, id):
-        self.tasks.pop(id-1)
+        for i, task in enumerate(self.tasks):
+            if task.id == id:
+                self.tasks.pop(i)
 
     def mark_done(self, id):
-        task = self.tasks[id - 1]
-        if task.status is False:
-            task.status = True
-        else:
-            self.status = False
-
-        self.tasks[id - 1] = task
+        for task in self.tasks:
+            if task.id == id:
+                task.status = not task.status
 
     def save_db(self):
         with open('db.json', 'w') as db:
