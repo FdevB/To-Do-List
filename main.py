@@ -3,6 +3,7 @@ a To_Do List with python==3.13.2
 """
 
 from datetime import datetime
+import json
 
 from module import auto_num_gen
 
@@ -12,7 +13,7 @@ class Task():
     Represents a task with name, description, status, creation date, and unique id.
     """
     def __init__(self, name, description=None):
-        self._id = next(auto_num_gen)
+        self.id = next(auto_num_gen)
         self.name = name
         self.status = False
         self.date = datetime.now()
@@ -25,6 +26,16 @@ class Task():
 class TaskManager():
     def __init__(self):
         self.tasks = []
+
+    def load_db(self):
+        with open('db.json', "r") as db:
+            data = json.load(db)
+            for item in data:
+                task = Task(item['name'], item['description'])
+                task.id = item['id']
+                task.status = item['status']
+                task.date = datetime.fromisoformat(item['date'])
+                self.tasks.append(task)
 
     def create_task(self, name, description=None):
         """create a task"""
@@ -53,9 +64,17 @@ class TaskManager():
 
         self.tasks[id - 1] = task
 
+    def save_db(self):
+        with open('db.json', 'w') as db:
+            json.dump([task.__dict__ for task in self.tasks], db, default=str, indent=4)
+
 
 class CommandLine():
     task_manager = TaskManager()
+    
+    def load(self):
+        self.task_manager.load_db()
+
     def create(self):
         name = input("give the task name: ")
         description = input("give the task description (optional): ")
@@ -81,3 +100,6 @@ class CommandLine():
 
     def show_all(self):
         self.task_manager.show_tasks()
+
+    def save(self):
+        self.task_manager.save_db()
