@@ -50,7 +50,9 @@ class TaskManager():
 
     def edit_task(self, id, name, description=None):
         """edited a task with id"""
-        self.tasks[id - 1] = Task(name, description)
+        task = Task(name, description)
+        task.id = id
+        self.tasks[id - 1] = task
 
     def remove_task(self, id):
         self.tasks.pop(id-1)
@@ -85,17 +87,17 @@ class CommandLine():
         id = int(input("give the task id you want edited: "))
         name = input("give the task name: ")
         description = input("give the task description (optional): ")
-        task = self.task_manager.edit_task(id, name, description)
-        print(f"succesfuly, your new update of task --> {task}")
+        self.task_manager.edit_task(id, name, description)
+        print(f"succesfuly, your new update of task")
 
     def mark_down(self):
-        id = int(input("give the task id you want edited: "))
+        id = int(input("give the task id you want mark down: "))
         task = self.task_manager.mark_done(id)
-        print(f"succesfuly, your new update of task --> {task}")
+        print(f"succesfuly, your mark down the task")
 
     def remove(self):
-        id = int(input("give the task id you want edited: "))
-        self.task_manager(id)
+        id = int(input("give the task id you want remove: "))
+        self.task_manager.remove_task(id)
         print("succesfully removed")
 
     def show_all(self):
@@ -103,3 +105,32 @@ class CommandLine():
 
     def save(self):
         self.task_manager.save_db()
+
+
+command_line = CommandLine()
+command_line.load()
+
+commands = {
+    'create': command_line.create,
+    'edit': command_line.edit,
+    'remove': command_line.remove,
+    'mark down': command_line.mark_down,
+    'show all': command_line.show_all,
+}
+
+print("\nAll task")
+command_line.show_all()
+while True:
+    print()
+    user_command = input("what do you want to do? ")
+    user_command = user_command.lower()
+
+    if user_command == 'stop':
+        break
+
+    try:
+        commands[user_command]()
+    except:
+        print("invalid input")
+
+command_line.save()
