@@ -1,2 +1,2 @@
 # To-Do List
-a To-Do list wirh python 
+a To-Do list with python 
